@@ -1,0 +1,105 @@
+:root{
+    --text-large:    29px;
+    --text-big:      23px;
+    --text-medium:   17px;
+    --text-small:    11px;
+    --text-tiny:     5px;
+
+    --color-green:          #356d54;
+    --color-green-light:    #527063;
+    --color-green-dark:     #1b3a2c;
+
+    --color-white:          #ffffff;
+    --color-white-shadow:   #ffffff5e;
+
+    --color-black:          #000000;
+    --color-black-shadow:   #0000005e;
+
+    --color-blue:           #292974;
+    --color-blue-light:     #3c3c75;
+    --color-blue-dark:      #17173d;
+
+    --color-red:            #c4294a;
+    --color-red-light:      #c24963;
+    --color-red-dark:       #5f1223;
+}
+
+@font-face {
+    font-family: "Pixel-anchor-jack";
+    src: url("../fonts/pixel-anchor-jack.ttf")  format("truetype"),
+    url("../fonts/pixel-anchor-jack.woff")      format("woff"),
+    url("../fonts/pixel-anchor-jack.woff2")     format("woff2");
+    font-weight: normal;
+    font-style: normal;
+}
+
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Pixel-anchor-jack';
+}
+
+.version_info {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    font-size: var(--text-small);
+    z-index: 4;
+}
+
+body{
+    width: 100%;
+    height: 100vh;
+}
+
+/* Menu */
+
+.menu{
+    width: 100%;
+    height: 100vh;
+    padding: 9%;
+    background-color: var(--color-green-dark);
+    color: var(--color-white-shadow);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: var(--text-medium);
+}
+
+.title {
+    font-size: var(--text-large);
+    text-align: center;
+    color: var(--color-blue-light);
+    text-shadow: var(--color-black) var(--text-tiny) var(--text-tiny) var(--text-tiny);
+}
+
+.menu_box {
+    display: flex;
+    gap: var(--text-medium);
+    align-items: center;
+    justify-content: center;
+}
+
+.menu_button {
+    font-size: var(--text-medium);
+    padding: var(--text-tiny);
+    border: 1px solid black;
+    border-radius: var(--text-tiny);
+    background: var(--color-blue-light);
+    box-shadow: var(--color-black) var(--text-tiny) var(--text-tiny) var(--text-tiny);
+    transition: 0.2s;
+}
+
+.menu_button:hover{
+    transform: scale(1.2);
+    box-shadow: var(--color-black) calc(var(--text-tiny) * 2) calc(var(--text-tiny) * 2) calc(var(--text-tiny) * 2);
+}
+
+/*  */
+
+.game_canvas{
+    width: 100%;
+    height: 100%;
+}
