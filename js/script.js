@@ -1,15 +1,25 @@
+//  Создание переменных
+let canv        = document.createElement("canvas"),
+    canv2       = canv,
+    score       = document.createElement("p"),
+    InnerHeight = 0.8*Math.floor(window.innerHeight),
+    InnerWidth  = 0.8*Math.floor(window.innerWidth),
+    DefaultSize = 0,
+    mapGrid     = 8,
+    obj         = [["blob", mapGrid-3, mapGrid-3, null], ["player", 2, 2, 0]],
+    map         = [],
+    difficult   = 1,
+    canMove     = true,
+    moveLoop    = 0, 
+    steep       = 0,
+    DMS         = 150/mapGrid;
+const   spikesImg   =new Image,
+        playerImg   =new Image,
+        blobImg     =new Image;
+spikesImg.src       ="img/spikes.png",
+playerImg.src       ="img/player.png",
+blobImg.src         ="img/blob.png";
 window.onload = function() {
-    //  Создание переменных
-    let canv        = document.createElement("canvas"),
-        canv2       = canv,
-        score       = document.createElement("p"),
-        InnerHeight = 0.8*Math.floor(window.innerHeight),
-        InnerWidth  = 0.8*Math.floor(window.innerWidth),
-        DefaultSize = 0,
-        mapGrid     = 15,
-        obj         = [["blob", mapGrid-3, mapGrid-3, null], ["player", 2, 2, 0]],
-        map         = [],
-        DMS         = 150/mapGrid;
     //  Функция обновления размеров канваса
     function CanvResize(){
         InnerHeight=.8*Math.floor(window.innerHeight),
@@ -44,7 +54,7 @@ window.onload = function() {
         // Добавление объектов
         for(let o=0;o<obj.length;o++)null!==obj[o][3]&&(map[obj[o][2]+1][obj[o][1]+1]=obj[o][3]);
         // Подсчёт привлекательности
-        for(let a=0;a<2;a++)for(let a=1;a<map.length-1;a++)for(let m=1;m<map[a].length-1;m++)map[a][m]>0&&(map[a][m]=Math.floor((map[a-1][m]+map[a][m-1]+map[a+1][m]+map[a][m+1])/4));
+        for(let a=0;a<2;a++)for(let a=1;a<map.length-1;a++)for(let m=1;m<map[a].length-1;m++)map[a][m]>0&&(map[a][m]=Math.floor((map[a-1][m]+map[a][m-1]+map[a+1][m]+map[a][m+1])/4)+1);
         // Удаление рамки
         let mapPull=[];
         for(let l=1;l<map.length-1;l++){
@@ -54,7 +64,6 @@ window.onload = function() {
         }
         map=mapPull;
     }
-    MapPotential();
     // Функция сортировки массива
     function sortArr(r,n){return r[0]===n[0]?0:r[0]>n[0]?-1:1}
     // Анимация движения
@@ -71,34 +80,52 @@ window.onload = function() {
                 ctx.clearRect(a*DMS*2, b*DMS, DMS*2, DMS),
                 ctx.clearRect(c*DMS*2, d*DMS, DMS*2, DMS);
                 if (a == c) {
-                    ctx.fillRect((a+(1-size)/2)*DMS*2, (b+(1-size)/2+(d-b)*g)*DMS, DMS*2*size, DMS*size)
+                    ctx.drawImage(color, (a+(1-size)/2)*DMS*2, (b+(1-size)/2+(d-b)*g)*DMS, DMS*2*size, DMS*size)
                 } else {
-                    ctx.fillRect((a+(1-size)/2+(c-a)*g)*DMS*2, (b+(1-size)/2)*DMS, DMS*2*size, DMS*size)
+                    ctx.drawImage(color, (a+(1-size)/2+(c-a)*g)*DMS*2, (b+(1-size)/2)*DMS, DMS*2*size, DMS*size)
                 }
                 e += 1/19,
                 g += 0.05;
             }, 10);
         setTimeout(() => {clearInterval(f);}, 190);
     }
+    // Проверка на победу
+    function willIWin (e) {
+        console.log(obj[0][1]==obj[1][1], obj[0][2]==obj[1][2])
+        if ((obj[0][1]==obj[1][1]&&obj[0][2]==obj[1][2])||e=="y") {
+            console.log("WWWWWWWWWWWWWWWWWWWWWWIIIIIIIIIIIIIINNNNNNNNNN")
+        }
+    }
     // Движение блёбы
     function blobMove () {
-        let tier = [], ox = obj[0][1], oy = obj[0][2]
+        let tier = [], ox = obj[0][1], oy = obj[0][2], d20 = Math.round(Math.random()*20), b0=0, b1, b2, tierPool
         ox > 0          &&tier.push([map[oy][ox-1], ox-1, oy]),
         oy > 0          &&tier.push([map[oy-1][ox], ox, oy-1]),
         ox < mapGrid-1  &&tier.push([map[oy][ox+1], ox+1, oy]),
         oy < mapGrid-1  &&tier.push([map[oy+1][ox], ox, oy+1])
         tier.sort(sortArr);
-        MoveAnimate(obj[0], tier[0], "green");
-        obj[0][1] = tier[0][1]
-        obj[0][2] = tier[0][2]
+        if (difficult == 1) {b0=19, b1=16, b2=12}
+        if (difficult == 2) {b0=16, b1=10, b2=4}
+        if (tier[0][0]!=0) {tierPool = tier[0]}
+        if (d20<b0&&tier.length>1&&tier[1][0]!=0) {tierPool = tier[1]}
+        if (d20<b1&&tier.length>2&&tier[2][0]!=0) {tierPool = tier[2]}
+        if (d20<b2&&tier.length>3&&tier[3][0]!=0) {tierPool = tier[3]}
+        tier = tierPool
+        try {
+            MoveAnimate(obj[0], tier, blobImg);
+            obj[0][1] = tier[1]
+            obj[0][2] = tier[2]
+        } catch{
+            willIWin("Y");
+        } 
     }
-    // Анимация появления стенки
-    function WallAnimate (x, y) {
+    // Анимация появления
+    function createAnimate (x, y, color) {
         let g = 1/19,
             f = setInterval(() => {
-                ctx.fillStyle = "gray";
+                ctx.fillStyle = color;
                 ctx.clearRect(x*DMS*2, y*DMS, DMS*2, DMS)
-                ctx.fillRect((x+(1-g)/2)*DMS*2, (y+(1-g)/2)*DMS, DMS*2*g, DMS*g)
+                ctx.drawImage(color, (x+(1-g)/2)*DMS*2, (y+(1-g)/2)*DMS, DMS*2*g, DMS*g)
                 g += 1/19;
             }, 10);
         setTimeout(() => {clearInterval(f);}, 190);
@@ -108,29 +135,36 @@ window.onload = function() {
         let i = 0
         do {
             i = [Math.round(Math.random()*(mapGrid-1)), Math.round(Math.random()*(mapGrid-1))]
-            console.log(obj[0], i, map[i[0]][i[1]], obj[0][1]!=i[0], obj[0][2]!=i[1])
             if (map[i[0]][i[1]] != 0&&obj[0][1]!=i[0]&&obj[0][2]!=i[1]) {
                 obj.push(["wall", i[0], i[1], 0])
-                WallAnimate(i[0], i[1])
+                createAnimate(i[0], i[1], spikesImg)
                 break
             }
         } while (map[i[0]][i[1]] == 0||obj[0][1]==i[0]||obj[0][2]==i[1]);
     }
     // Движение игрока
-    let canMove = true, moveLoop = 0, steep = 0
     function move(e,n){
         if (e == "y") {
-            MoveAnimate(obj[1], [0, obj[1][1], obj[1][2]+n], "blue")
+            MoveAnimate(obj[1], [0, obj[1][1], obj[1][2]+n], playerImg)
             obj[1][2]+=n
         }
         if (e == "x") {
-            MoveAnimate(obj[1], [0, obj[1][1]+n, obj[1][2]], "blue")
+            MoveAnimate(obj[1], [0, obj[1][1]+n, obj[1][2]], playerImg)
             obj[1][1]+=n
+        }
+        willIWin();
+        ctx.clearRect(0, 0, 300, 150)
+        ctx.drawImage(playerImg, obj[1][1]*DMS*2, obj[1][2]*DMS, DMS*2, DMS)
+        ctx.drawImage(blobImg, obj[0][1]*DMS*2, obj[0][2]*DMS, DMS*2, DMS)
+        for (let i = 0; i < obj.length; i++) {
+            if (obj[i][0]=="wall") {
+                ctx.drawImage(spikesImg, obj[i][1]*DMS*2, obj[i][2]*DMS, DMS*2, DMS)
+            }
         }
         canMove = false
         setTimeout(() => {canMove = true}, 210);
         moveLoop++;
-        if (moveLoop > 0) {
+        if (moveLoop > 4) {
             moveLoop = 0
             addEntt();
         }
@@ -138,42 +172,34 @@ window.onload = function() {
         score.innerHTML = "Steep: "+steep
         MapPotential();
         blobMove();
-        drawP();
+        // drawP();
     }
-
+    // Определение направления движения игрока
     function direction(e){
         87==e.keyCode&&map[obj[1][2]-1][obj[1][1]]!=0&&canMove===true&&obj[1][2]>0&&move("y",-1),
         65==e.keyCode&&map[obj[1][2]][obj[1][1]-1]!=0&&canMove===true&&obj[1][1]>0&&move("x",-1),
         83==e.keyCode&&map[obj[1][2]+1][obj[1][1]]!=0&&canMove===true&&obj[1][2]<mapGrid-1&&move("y",1),
         68==e.keyCode&&map[obj[1][2]][obj[1][1]+1]!=0&&canMove===true&&obj[1][1]<mapGrid-1&&move("x",1)
     }
-
+    // Появление игрока и блёпки
+    createAnimate(obj[0][1], obj[0][2], blobImg)
+    createAnimate(obj[1][1], obj[1][2], playerImg)
+    // Движение игрока при нажатии клавиши
     document.addEventListener("keydown",direction);
+    // Рассчёт привлекательности карты
+    MapPotential();
+    
 // Отрисовка
     function drawP () {
-        // for (let i = 0; i < map.length; i++) {
-        //     for (let q = 0; q < map[i].length; q++) {
-        //         if (map[i][q]>0) {
-        //             ctx.fillStyle = "rgb(255 0 0 / "+map[i][q]+"%)";
-        //         } else {
-        //             ctx.fillStyle = "rgb(255 0 0 / 0%)";
-        //         }
-        //         ctx.fillRect(q*DMS*2, i*DMS, DMS*2, DMS);
-        //     }
-        // }
-        // for (let i = 0; i < obj.length; i++) {
-        //     if (obj[i][0]=="player") {
-        //         ctx.fillStyle = "blue";
-        //     }
-        //     if (obj[i][0]=="blob") {
-        //         // ctx.fillStyle = "green";
-        //     }
-        //     if (obj[i][0]=="wall") {
-        //         // ctx.fillStyle = "yellow";
-        //     }
-        //     ctx.fillRect(obj[i][1]*DMS*2, obj[i][2]*DMS, DMS*2, DMS)
-        //     ctx.fillStyle = "white"
-        // }
+        for (let i = 0; i < map.length; i++) {
+            for (let q = 0; q < map[i].length; q++) {
+                if (map[i][q]>0) {
+                    ctx.fillStyle = "rgb(255 0 0 / "+map[i][q]+"%)";
+                } else {
+                    ctx.fillStyle = "rgb(255 0 0 / 0%)";
+                }
+                ctx.fillRect(q*DMS*2, i*DMS, DMS*2, DMS);
+            }
+        }
     }
-    drawP();
 };
