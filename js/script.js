@@ -1,6 +1,5 @@
 //  Создание переменных
 let canv        = document.createElement("canvas"),
-    canv2       = canv,
     score       = document.createElement("p"),
     InnerHeight = 0.8*Math.floor(window.innerHeight),
     InnerWidth  = 0.8*Math.floor(window.innerWidth),
@@ -12,27 +11,33 @@ let canv        = document.createElement("canvas"),
     canMove     = true,
     moveLoop    = 0, 
     steep       = 0,
-    DMS         = 150/mapGrid;
+    DMS         = 128;
 const   spikesImg   =new Image,
         playerImg   =new Image,
         blobImg     =new Image;
 spikesImg.src       ="img/spikes.png",
 playerImg.src       ="img/player.png",
 blobImg.src         ="img/blob.png";
-window.onload = function() {
+canv.style.backgroundSize=100/mapGrid+"% "+100/mapGrid+"%,"+100/mapGrid+"% "+100/mapGrid+"%,"+400/mapGrid+"% "+400/mapGrid+"%";
+window.onload = () => {
+    
+}
+function InitGame() {
     //  Функция обновления размеров канваса
     function CanvResize(){
-        InnerHeight=.8*Math.floor(window.innerHeight),
-        InnerWidth=.8*Math.floor(window.innerWidth),
-        DefaultSize=InnerHeight>InnerWidth?InnerWidth:InnerHeight,
-        canv.setAttribute("style","width:"+DefaultSize+"px; height:"+DefaultSize+"px;"),
-        canv2.setAttribute("style","width:"+DefaultSize+"px; height:"+DefaultSize+"px;")
+        InnerHeight =.8*Math.floor(window.innerHeight),
+        InnerWidth  =.8*Math.floor(window.innerWidth),
+        DefaultSize =InnerHeight>InnerWidth?InnerWidth:InnerHeight,
+        canv.style.width    = DefaultSize+"px",
+        canv.style.height   = DefaultSize+"px",
+        canv.width          = mapGrid * 128,
+        canv.height         = mapGrid * 128;
     }
     //  Инициализация канваса и интерфейса
+    CanvResize(),
     score.className="score",
     score.innerHTML="Steep: 0",
-    CanvResize(),
-    window.addEventListener("resize",CanvResize,!0),
+    window.addEventListener("resize",()=>{CanvResize();draw();}),
     console.log(DMS)
     ctx = canv.getContext("2d"),
     document.body.querySelector(".menu").remove(),
@@ -77,24 +82,43 @@ window.onload = function() {
             f = setInterval(() => {
                 ctx.fillStyle = color;
                 let size = Math.round((Math.sin(Math.PI * (1+e))+1+Math.sin(Math.PI * e)*0.75)*100)/100
-                ctx.clearRect(a*DMS*2, b*DMS, DMS*2, DMS),
-                ctx.clearRect(c*DMS*2, d*DMS, DMS*2, DMS);
+                ctx.clearRect(a*DMS, b*DMS, DMS, DMS),
+                ctx.clearRect(c*DMS, d*DMS, DMS, DMS);
                 if (a == c) {
-                    ctx.drawImage(color, (a+(1-size)/2)*DMS*2, (b+(1-size)/2+(d-b)*g)*DMS, DMS*2*size, DMS*size)
+                    ctx.drawImage(color, (a+(1-size)/2)*DMS, (b+(1-size)/2+(d-b)*g)*DMS, DMS*size, DMS*size)
                 } else {
-                    ctx.drawImage(color, (a+(1-size)/2+(c-a)*g)*DMS*2, (b+(1-size)/2)*DMS, DMS*2*size, DMS*size)
+                    ctx.drawImage(color, (a+(1-size)/2+(c-a)*g)*DMS, (b+(1-size)/2)*DMS, DMS*size, DMS*size)
                 }
                 e += 1/19,
                 g += 0.05;
             }, 10);
         setTimeout(() => {clearInterval(f);}, 190);
     }
-    // Проверка на победу
-    function willIWin (e) {
-        console.log(obj[0][1]==obj[1][1], obj[0][2]==obj[1][2])
-        if ((obj[0][1]==obj[1][1]&&obj[0][2]==obj[1][2])||e=="y") {
-            console.log("WWWWWWWWWWWWWWWWWWWWWWIIIIIIIIIIIIIINNNNNNNNNN")
+    // Анимация появления
+    function createAnimate (x, y, color) {
+        let g = 1/19,
+            f = setInterval(() => {
+                ctx.fillStyle = color;
+                ctx.clearRect(x*DMS, y*DMS, DMS, DMS)
+                ctx.drawImage(color, (x+(1-g)/2)*DMS, (y+(1-g)/2)*DMS, DMS*g, DMS*g)
+                g += 1/19;
+            }, 10);
+        setTimeout(() => {clearInterval(f);}, 190);
+    }
+    // Повторная отрисовка
+    function draw () {
+        ctx.clearRect(0, 0, DMS*mapGrid, DMS*mapGrid)
+        ctx.drawImage(playerImg, obj[1][1]*DMS, obj[1][2]*DMS, DMS, DMS)
+        ctx.drawImage(blobImg, obj[0][1]*DMS, obj[0][2]*DMS, DMS, DMS)
+        for (let i = 0; i < obj.length; i++) {
+            if (obj[i][0]=="wall") {
+                ctx.drawImage(spikesImg, obj[i][1]*DMS, obj[i][2]*DMS, DMS, DMS)
+            }
         }
+    }
+    // Победа
+    function Win (e) {
+        alert("Эта пабедааааа")
     }
     // Движение блёбы
     function blobMove () {
@@ -115,35 +139,24 @@ window.onload = function() {
             MoveAnimate(obj[0], tier, blobImg);
             obj[0][1] = tier[1]
             obj[0][2] = tier[2]
-        } catch{
-            willIWin("Y");
-        } 
-    }
-    // Анимация появления
-    function createAnimate (x, y, color) {
-        let g = 1/19,
-            f = setInterval(() => {
-                ctx.fillStyle = color;
-                ctx.clearRect(x*DMS*2, y*DMS, DMS*2, DMS)
-                ctx.drawImage(color, (x+(1-g)/2)*DMS*2, (y+(1-g)/2)*DMS, DMS*2*g, DMS*g)
-                g += 1/19;
-            }, 10);
-        setTimeout(() => {clearInterval(f);}, 190);
+        } catch{} 
     }
     // Добавлние стенки
     function addEntt () {
         let i = 0
         do {
             i = [Math.round(Math.random()*(mapGrid-1)), Math.round(Math.random()*(mapGrid-1))]
-            if (map[i[0]][i[1]] != 0&&obj[0][1]!=i[0]&&obj[0][2]!=i[1]) {
+            console.log(obj.length-1, map[i[1]][i[0]], i[1], i[0], map[i[1]][i[0]] != 0&&(obj[0][1]!=i[0]||obj[0][2]!=i[1]))
+            if (map[i[1]][i[0]] != 0&&(obj[0][1]!=i[0]||obj[0][2]!=i[1])) {
                 obj.push(["wall", i[0], i[1], 0])
                 createAnimate(i[0], i[1], spikesImg)
                 break
             }
-        } while (map[i[0]][i[1]] == 0||obj[0][1]==i[0]||obj[0][2]==i[1]);
+        } while (!(map[i[1]][i[0]] != 0&&(obj[0][1]!=i[0]||obj[0][2]!=i[1])));
     }
     // Движение игрока
     function move(e,n){
+        draw();
         if (e == "y") {
             MoveAnimate(obj[1], [0, obj[1][1], obj[1][2]+n], playerImg)
             obj[1][2]+=n
@@ -152,27 +165,22 @@ window.onload = function() {
             MoveAnimate(obj[1], [0, obj[1][1]+n, obj[1][2]], playerImg)
             obj[1][1]+=n
         }
-        willIWin();
-        ctx.clearRect(0, 0, 300, 150)
-        ctx.drawImage(playerImg, obj[1][1]*DMS*2, obj[1][2]*DMS, DMS*2, DMS)
-        ctx.drawImage(blobImg, obj[0][1]*DMS*2, obj[0][2]*DMS, DMS*2, DMS)
-        for (let i = 0; i < obj.length; i++) {
-            if (obj[i][0]=="wall") {
-                ctx.drawImage(spikesImg, obj[i][1]*DMS*2, obj[i][2]*DMS, DMS*2, DMS)
+        if ((obj[0][1]==obj[1][1]&&obj[0][2]==obj[1][2])) {
+            setTimeout(() => {Win();}, 210);
+        } else{
+            canMove = false
+            setTimeout(() => {canMove = true}, 210);
+            moveLoop++;
+            if (moveLoop > 4) {
+                moveLoop = 0
+                addEntt();
             }
+            steep++
+            score.innerHTML = "Steep: "+steep
+            MapPotential();
+            blobMove();
+            // drawP();
         }
-        canMove = false
-        setTimeout(() => {canMove = true}, 210);
-        moveLoop++;
-        if (moveLoop > 4) {
-            moveLoop = 0
-            addEntt();
-        }
-        steep++
-        score.innerHTML = "Steep: "+steep
-        MapPotential();
-        blobMove();
-        // drawP();
     }
     // Определение направления движения игрока
     function direction(e){
@@ -184,8 +192,14 @@ window.onload = function() {
     // Появление игрока и блёпки
     createAnimate(obj[0][1], obj[0][2], blobImg)
     createAnimate(obj[1][1], obj[1][2], playerImg)
+    setTimeout(() => {draw();}, 200);
     // Движение игрока при нажатии клавиши
     document.addEventListener("keydown",direction);
+    // Движение при свайпе
+    canv.addEventListener('swiped-right',   ()=>{map[obj[1][2]][obj[1][1]+1]!=0&&canMove===true&&obj[1][1]<mapGrid-1&&move("x",1)});
+    canv.addEventListener('swiped-up',      ()=>{map[obj[1][2]-1][obj[1][1]]!=0&&canMove===true&&obj[1][2]>0&&move("y",-1)});
+    canv.addEventListener('swiped-down',    ()=>{map[obj[1][2]+1][obj[1][1]]!=0&&canMove===true&&obj[1][2]<mapGrid-1&&move("y",1)});
+    canv.addEventListener('swiped-left',    ()=>{map[obj[1][2]][obj[1][1]-1]!=0&&canMove===true&&obj[1][1]>0&&move("x",-1)});
     // Рассчёт привлекательности карты
     MapPotential();
     

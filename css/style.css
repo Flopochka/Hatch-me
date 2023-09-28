@@ -1,9 +1,9 @@
 :root{
-    --text-large:    29px;
-    --text-big:      23px;
-    --text-medium:   17px;
-    --text-small:    11px;
-    --text-tiny:     5px;
+    --text-large:    55px;
+    --text-big:      44px;
+    --text-medium:   33px;
+    --text-small:    22px;
+    --text-tiny:     11px;
 
     --color-green:          #356d54;
     --color-green-light:    #527063;
@@ -25,19 +25,46 @@
 }
 
 @font-face {
-    font-family: "Pixel-anchor-jack";
-    src: url("../fonts/pixel-anchor-jack.ttf")  format("truetype"),
-    url("../fonts/pixel-anchor-jack.woff")      format("woff"),
-    url("../fonts/pixel-anchor-jack.woff2")     format("woff2");
+    font-family: "Caviar";
+    src: url("../fonts/caviardreams.ttf")  format("truetype"),
+    url("../fonts/caviardreams.woff")      format("woff"),
+    url("../fonts/caviardreams.woff2")     format("woff2");
     font-weight: normal;
     font-style: normal;
+}
+
+@font-face {
+    font-family: "Caviar";
+    src: url("../fonts/caviar_dreams_bold.ttf")  format("truetype"),
+    url("../fonts/caviar_dreams_bold.woff")      format("woff"),
+    url("../fonts/caviar_dreams_bold.woff2")     format("woff2");
+    font-weight: bold;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "Caviar";
+    src: url("../fonts/caviardreams_bolditalic.ttf")  format("truetype"),
+    url("../fonts/caviardreams_bolditalic.woff")      format("woff"),
+    url("../fonts/caviardreams_bolditalic.woff2")     format("woff2");
+    font-weight: bold;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: "Caviar";
+    src: url("../fonts/caviardreams_italic.ttf")  format("truetype"),
+    url("../fonts/caviardreams_italic.woff")      format("woff"),
+    url("../fonts/caviardreams_italic.woff2")     format("woff2");
+    font-weight: normal;
+    font-style: italic;
 }
 
 *{
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'Pixel-anchor-jack';
+    /* font-family: 'Caviar'; */
 }
 
 .version_info {
@@ -55,6 +82,7 @@ body{
     align-items: center;
     justify-content: center;
     flex-direction: column-reverse;
+    overflow: hidden;
     /* background: coral; */
 }
 
@@ -103,5 +131,6 @@ body{
 }
 
 canvas{
+    background-image: linear-gradient(currentColor 1px, transparent 1px),linear-gradient(to right, currentColor 1px, transparent 1px), url(/img/grass.jpg);
     box-shadow: -3px -3px 3px var(--color-white-shadow), 3px 3px 3px var(--color-black-shadow);
 }
