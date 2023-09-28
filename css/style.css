@@ -1,3 +1,4 @@
+/* Roots */
 :root{
     --text-large:    55px;
     --text-big:      44px;
@@ -5,66 +6,65 @@
     --text-small:    22px;
     --text-tiny:     11px;
 
-    --color-green:          #356d54;
-    --color-green-light:    #527063;
-    --color-green-dark:     #1b3a2c;
+    --color-white:           #ffffff;
+    --color-white-shadow:    #ffffff5e;
 
-    --color-white:          #ffffff;
-    --color-white-shadow:   #ffffff5e;
+    --color-black:           #000000;
+    --color-black-shadow:    #0000005e;
 
-    --color-black:          #000000;
-    --color-black-shadow:   #0000005e;
+    --color-green:           #7EE04A;
+    --color-green-light:     #A1F077;
+    --color-green-light-two: #B6F097;
+    --color-green-dark:      #71A854;
+    --color-green-dark-two:  #71A854;
 
-    --color-blue:           #292974;
-    --color-blue-light:     #3c3c75;
-    --color-blue-dark:      #17173d;
+    --color-orange:          #FFBC54;
+    --color-orange-light:    #FFCC7F;
+    --color-orange-light-two:#FFDAA1;
+    --color-orange-dark:     #BF995F;
+    --color-orange-dark-two: #A66F1B;
 
-    --color-red:            #c4294a;
-    --color-red-light:      #c24963;
-    --color-red-dark:       #5f1223;
+    --color-purple:          #7A44B2;
+    --color-purple-light:    #A674D8;
+    --color-purple-light-two:#B38FD8;
+    --color-purple-dark:     #664785;
+    --color-purple-dark-two: #441673;
 }
-
+/* Fonts */
 @font-face {
-    font-family: "Caviar";
-    src: url("../fonts/caviardreams.ttf")  format("truetype"),
-    url("../fonts/caviardreams.woff")      format("woff"),
-    url("../fonts/caviardreams.woff2")     format("woff2");
+    font-family: "halogen";
+    src: url("../fonts/Halogen.ttf")  format("truetype"),
+    url("../fonts/halogen.woff")      format("woff"),
+    url("../fonts/halogen.woff2")     format("woff2"),
+    url("../fonts/halogen.eot")       format("embedded-opentype");
     font-weight: normal;
     font-style: normal;
 }
+/* Keyframes */
 
-@font-face {
-    font-family: "Caviar";
-    src: url("../fonts/caviar_dreams_bold.ttf")  format("truetype"),
-    url("../fonts/caviar_dreams_bold.woff")      format("woff"),
-    url("../fonts/caviar_dreams_bold.woff2")     format("woff2");
-    font-weight: bold;
-    font-style: normal;
+@keyframes bg-move {
+    from{
+        background-position: 0px, 0px;
+    }
+    to{
+        background-position: -256px 87%;
+    }
 }
-
-@font-face {
-    font-family: "Caviar";
-    src: url("../fonts/caviardreams_bolditalic.ttf")  format("truetype"),
-    url("../fonts/caviardreams_bolditalic.woff")      format("woff"),
-    url("../fonts/caviardreams_bolditalic.woff2")     format("woff2");
-    font-weight: bold;
-    font-style: italic;
-}
-
-@font-face {
-    font-family: "Caviar";
-    src: url("../fonts/caviardreams_italic.ttf")  format("truetype"),
-    url("../fonts/caviardreams_italic.woff")      format("woff"),
-    url("../fonts/caviardreams_italic.woff2")     format("woff2");
-    font-weight: normal;
-    font-style: italic;
-}
-
+/* Global */
 *{
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    /* font-family: 'Caviar'; */
+    font-family: 'halogen';
+    color: inherit;
+}
+/* Code */
+body{
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+    color: var(--color-white);
+    background: var(--color-green);
 }
 
 .version_info {
@@ -75,44 +75,38 @@
     z-index: 4;
 }
 
-body{
-    width: 100%;
-    height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column-reverse;
-    overflow: hidden;
-    /* background: coral; */
+.box{
+    
 }
-
 /* Menu */
-
 .menu{
     width: 100%;
     height: 100vh;
     padding: 9%;
-    background-color: var(--color-green-dark);
-    color: var(--color-white-shadow);
+    background: url(../img/grass.jpg);
+    background-size: 256px 256px;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-direction: column;
     gap: var(--text-medium);
+    background-position: 0px, 0px;
+    animation: bg-move 2s linear infinite;
 }
 
 .title {
     font-size: var(--text-large);
     text-align: center;
     color: var(--color-blue-light);
-    text-shadow: var(--color-black) var(--text-tiny) var(--text-tiny) var(--text-tiny);
+    text-shadow: var(--color-black-shadow) var(--text-tiny) var(--text-tiny) var(--text-tiny);
 }
 
 .menu_box {
     display: flex;
-    gap: var(--text-medium);
-    align-items: center;
+    gap: var(--text-tiny);
+    align-items: stretch;
     justify-content: center;
+    flex-direction: column;
 }
 
 .menu_button {
@@ -120,17 +114,80 @@ body{
     padding: var(--text-tiny);
     border: 1px solid black;
     border-radius: var(--text-tiny);
-    background: var(--color-blue-light);
-    box-shadow: var(--color-black) var(--text-tiny) var(--text-tiny) var(--text-tiny);
+    background: var(--color-orange-dark);
+    box-shadow: var(--color-black-shadow) var(--text-tiny) var(--text-tiny) var(--text-tiny);
     transition: 0.2s;
 }
 
 .menu_button:hover{
-    transform: scale(1.2);
-    box-shadow: var(--color-black) calc(var(--text-tiny) * 2) calc(var(--text-tiny) * 2) calc(var(--text-tiny) * 2);
+    background: var(--color-orange-dark-two);
+    transform: scale(0.9);
+    box-shadow: var(--color-black-shadow) calc(var(--text-tiny) / 2) calc(var(--text-tiny) / 2) calc(var(--text-tiny) / 2);
+}
+
+.difficult_box{
+    display: flex;
+    gap: var(--text-tiny);
+    align-items: stretch;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.difficult_text{
+    font-size: var(--text-large);
+}
+
+/* Game */
+
+.game{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: var(--text-tiny);
+    font-size: var(--text-medium);
 }
 
 canvas{
-    background-image: linear-gradient(currentColor 1px, transparent 1px),linear-gradient(to right, currentColor 1px, transparent 1px), url(/img/grass.jpg);
-    box-shadow: -3px -3px 3px var(--color-white-shadow), 3px 3px 3px var(--color-black-shadow);
+    border-right: 1px solid black;
+    border-bottom: 1px solid black;
+    background-image: linear-gradient(var(--color-black) 1px, transparent 1px),linear-gradient(to right, var(--color-black) 1px, transparent 1px), url(/img/grass.jpg);
+    box-shadow: 0 0 24px var(--color-black-shadow);
+}
+
+/* win window */
+
+.win-notify{
+    position: absolute;
+    top: 0;
+    top: 30%;
+    font-size: var(--text-medium);
+    padding: var(--text-medium);
+    background: var(--color-orange-dark);
+    border: calc(var(--text-tiny)/2) solid var(--color-orange-dark-two);
+    border-radius: var(--text-medium);
+}
+
+.win-notify h2{
+    margin-bottom: var(--text-small);
+}
+
+.win-notify p{
+    margin-bottom: var(--text-small);
+}
+
+.win-but{
+    font-size: var(--text-medium);
+    padding: var(--text-tiny);
+    border: calc(var(--text-tiny)/2) solid var(--color-orange-dark-two);
+    border-radius: var(--text-tiny);
+    background: var(--color-purple-dark);
+    transition: 0.2s;
+}
+
+.win-but:hover{
+    background: var(--color-purple-dark-two);
+    transform: scale(0.9);
 }

@@ -1,10 +1,19 @@
 //  Создание переменных
 let canv        = document.createElement("canvas"),
+    gameBox     = document.createElement("div"),
     score       = document.createElement("p"),
+    startBut    = document.querySelector(".start-button"),
+    shopBut     = document.querySelector(".shop-button"),
+    settingsBut = document.querySelector(".settings-button"),
+    difficultBox= document.createElement("div"),
+    difButNorm  = document.createElement("button"),
+    difButHard  = document.createElement("button"),
+    difButImpo  = document.createElement("button"),
+    difficultTxt= document.createElement("p"),
     InnerHeight = 0.8*Math.floor(window.innerHeight),
     InnerWidth  = 0.8*Math.floor(window.innerWidth),
     DefaultSize = 0,
-    mapGrid     = 8,
+    mapGrid     = 10,
     obj         = [["blob", mapGrid-3, mapGrid-3, null], ["player", 2, 2, 0]],
     map         = [],
     difficult   = 1,
@@ -15,14 +24,52 @@ let canv        = document.createElement("canvas"),
 const   spikesImg   =new Image,
         playerImg   =new Image,
         blobImg     =new Image;
-spikesImg.src       ="img/spikes.png",
-playerImg.src       ="img/player.png",
-blobImg.src         ="img/blob.png";
-canv.style.backgroundSize=100/mapGrid+"% "+100/mapGrid+"%,"+100/mapGrid+"% "+100/mapGrid+"%,"+400/mapGrid+"% "+400/mapGrid+"%";
+spikesImg.src           ="img/spikes.png",
+playerImg.src           ="img/player.png",
+blobImg.src             ="img/blob.png",
+gameBox.className       = "game",
+difficultBox.className  = "difficult_box",
+difficultTxt.className  = "difficult_text";
+difficultTxt.innerText = "Выберите сложность"
+difButNorm.classList = "menu_button dif-norm",
+difButHard.classList = "menu_button dif-hard",
+difButImpo.classList = "menu_button dif-impo";
+difButNorm.innerText = "Нормально",
+difButHard.innerText = "Сложно",
+difButImpo.innerText = "Нереально";
+const menuForBack = document.querySelector(".menu")
+console.log(menuForBack)
 window.onload = () => {
-    
+    startBut.addEventListener('click', () => {
+        document.body.querySelector(".menu_box").remove(),
+        document.body.querySelector(".title").remove(),
+        document.querySelector(".menu").append(difficultTxt),
+        document.querySelector(".menu").append(difficultBox),
+        difficultBox.append(difButNorm),
+        difficultBox.append(difButHard),
+        difficultBox.append(difButImpo);
+        difButNorm.addEventListener('click', () => {
+            document.body.removeChild(document.querySelector(".menu"))
+            mapGrid = 8,
+            difficult = 1
+            InitGame();
+        });
+        difButHard.addEventListener('click', () => {
+            document.body.removeChild(document.querySelector(".menu"))
+            mapGrid = 8,
+            difficult = 2
+            InitGame();
+        });
+        difButImpo.addEventListener('click', () => {
+            document.body.removeChild(document.querySelector(".menu"))
+            mapGrid = 12,
+            difficult = 3
+            InitGame();
+        });
+    });
 }
 function InitGame() {
+    canv.style.backgroundSize=100/mapGrid+"% "+100/mapGrid+"%,"+100/mapGrid+"% "+100/mapGrid+"%,"+200/mapGrid+"% "+200/mapGrid+"%";
     //  Функция обновления размеров канваса
     function CanvResize(){
         InnerHeight =.8*Math.floor(window.innerHeight),
@@ -36,13 +83,13 @@ function InitGame() {
     //  Инициализация канваса и интерфейса
     CanvResize(),
     score.className="score",
-    score.innerHTML="Steep: 0",
+    score.innerHTML="Ход: 0",
     window.addEventListener("resize",()=>{CanvResize();draw();}),
     console.log(DMS)
     ctx = canv.getContext("2d"),
-    document.body.querySelector(".menu").remove(),
-    document.body.append(canv),
-    document.body.append(score);
+    document.body.append(gameBox),
+    gameBox.append(score),
+    gameBox.append(canv);
     // Функция расчёта привлекательности карты
     function MapPotential () {
         // Обнуление
@@ -118,7 +165,26 @@ function InitGame() {
     }
     // Победа
     function Win (e) {
-        alert("Эта пабедааааа")
+        let winWindow = document.createElement("div"), difPull = "Нереально"
+        winWindow.className = "win-notify"
+        if (difficult == 1) {
+            difPull = "Нормально"
+        }
+        if (difficult == 2) {
+            difPull = "Сложно"
+        }
+        winWindow.innerHTML = "<h2>Победа!</h2><p>Потрачено шагов: "+steep+"<br>Сложность: "+difPull+"<br>Очки: +"+Math.round(difficult*300/steep)+"</p><button class='win-but'>Продолжить</button>"
+        document.body.append(winWindow)
+        winWindow.style.left = "calc(50% - "+winWindow.offsetWidth/2+"px)";
+        window.addEventListener("resize",()=>{winWindow.style.left = "calc(50% - "+winWindow.offsetWidth/2+"px)"});
+        document.querySelector(".win-but").addEventListener('click', ()=>{
+            document.body.removeChild(gameBox)
+            document.body.removeChild(winWindow)
+            document.body.append(menuForBack)
+            map = [],
+            obj = [["blob", mapGrid-3, mapGrid-3, null], ["player", 2, 2, 0]],
+            steep = 0
+        })
     }
     // Движение блёбы
     function blobMove () {
@@ -176,7 +242,7 @@ function InitGame() {
                 addEntt();
             }
             steep++
-            score.innerHTML = "Steep: "+steep
+            score.innerHTML = "Ход: "+steep
             MapPotential();
             blobMove();
             // drawP();
